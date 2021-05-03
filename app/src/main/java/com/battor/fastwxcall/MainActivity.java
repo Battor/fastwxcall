@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity implements OnPageChangeListe
     private List<Fragment> mTabFragments = new ArrayList<Fragment>();   // 上方 Fragment 的集合
     private FragmentPagerAdapter mAdapter;
 
-    private String[] mContents = new String[] {"这是联系页面", "这是数据页面", "这是设置页面"};
+    private String[] mContents = new String[] {/*"这是联系页面",*/ "这是数据页面", "这是设置页面"};
 
     private List<ChangeColorIconWithTextView> mIndicators = new ArrayList<ChangeColorIconWithTextView>();   // 下方指示器的集合
 
@@ -48,6 +48,11 @@ public class MainActivity extends AppCompatActivity implements OnPageChangeListe
     }
 
     private void initDatas(){
+
+        ContactFragment cf = new ContactFragment();
+        cf.setConatctData(initContactData());
+        mTabFragments.add(cf);
+
         for (String title : mContents){
             TabFragment tabFragment = new TabFragment();
             Bundle args = new Bundle();
@@ -172,5 +177,14 @@ public class MainActivity extends AppCompatActivity implements OnPageChangeListe
         {
             e.printStackTrace();
         }
+    }
+
+
+    private List<Contact> initContactData(){
+        List<Contact> result = new ArrayList<Contact>();
+        result.add(new Contact("1", R.mipmap.itshighnoon, R.mipmap.captainamerica));
+        result.add(new Contact("2", R.mipmap.itshighnoon, R.mipmap.captainamerica));
+        result.add(new Contact("3", R.mipmap.itshighnoon, R.mipmap.captainamerica));
+        return result;
     }
 }

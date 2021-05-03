@@ -1,0 +1,4 @@
+<resources>
+    <string name="welcome_text">Hello World!</string>
+    <string name="app_name">FastWXCall</string>
+</resources>

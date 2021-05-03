@@ -1,0 +1,2 @@
+rootProject.name='FastWXCall'
+include ':app'

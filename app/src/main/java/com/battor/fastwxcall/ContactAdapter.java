@@ -1,10 +1,13 @@
 package com.battor.fastwxcall;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,9 +27,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
     private Context mContext;
     private List<Contact> mContactList;
+    private ContactFragment mContactFragment;
+    private ContactDataBaseHelper dbHelper;
 
     private final int TYPE_CONTENT = 1;
     private final int TYPE_BOTTOM = 2;
+
+    public static final int CONTACT_FRAGMENT_EDIT_REQUEST_CODE = 0;
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -49,8 +56,10 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         }
     }
 
-    ContactAdapter(List<Contact> contactList){
+    ContactAdapter(ContactFragment contactFragment, List<Contact> contactList){
+        this.mContactFragment = contactFragment;
         this.mContactList = contactList;
+        this.dbHelper = ContactDataBaseHelper.initAndObtain(mContactFragment.getContext());
     }
 
     @NonNull
@@ -73,11 +82,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         if(position <= mContactList.size() - 1){
-            Contact contact = mContactList.get(position);
-            holder.mHeadImageView.setImageResource(contact.getHeadImgId());
-            holder.mImageView.setImageResource(contact.getPhotoId());
+            final Contact nowContact = mContactList.get(position);
+            holder.mImageView.setImageBitmap(BitmapFactory.decodeFile(nowContact.getPhotoImgPath()));
+            holder.mHeadImageView.setImageResource(
+                    mContext.getResources().getIdentifier(
+                            "head_img_" + nowContact.getHeadImgId(), "mipmap", mContext.getPackageName()));
 
             holder.mHeadImageView.setOnClickListener(this);
             holder.mImageView.setOnLongClickListener(new View.OnLongClickListener(){
@@ -87,7 +98,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                     return true;
                 }
             });
-            holder.mEditImageView.setOnClickListener(this);
+            holder.mEditImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, EditContactActivity.class);    // 此处通过 startActivityForResult 来处理，极不优雅，待寻找更好的方法
+                    intent.putExtra("contact_id", nowContact.getId());
+                    mContactFragment.startActivityForResult(intent, CONTACT_FRAGMENT_EDIT_REQUEST_CODE);
+                }
+            });
             holder.mEditImageView.setOnLongClickListener(new View.OnLongClickListener(){
                 @Override
                 public boolean onLongClick(View view) {
@@ -97,7 +115,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                             .setPositiveButton("是", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    Toast.makeText(mContext, "假装已经删除了", Toast.LENGTH_SHORT).show();
+                                    dbHelper.DeleteContact(mContactList.get(position).getId());
+                                    mContactList = dbHelper.getContactList();
+                                    notifyDataSetChanged();
                                 }
                             })
                             .setNegativeButton("否", null)
@@ -106,7 +126,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                 }
             });
         }else{
-            holder.mAddImageView.setOnClickListener(this);
+            holder.mAddImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, EditContactActivity.class);
+                    mContactFragment.startActivityForResult(intent, CONTACT_FRAGMENT_EDIT_REQUEST_CODE);
+                }
+            });
         }
     }
 
@@ -128,20 +154,16 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.contact_item_headimg:
-                Toast.makeText(mContext, "headimg clicked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mContext, "headimg clicked", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.contact_item_photo:
-                Toast.makeText(mContext, "photo clicked", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.contact_item_editimg:
-                Intent intent = new Intent(mContext, EditContactActivity.class);
-                mContext.startActivity(
-
-                        intent);
-                break;
-            case R.id.contact_item_add:
-                Toast.makeText(mContext, "add clicked", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(mContext, "photo clicked", Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    public void updateContactList(List<Contact> contactList){
+        this.mContactList = contactList;
+        notifyDataSetChanged();
     }
 }

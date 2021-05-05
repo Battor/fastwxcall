@@ -16,7 +16,6 @@
             android:id="@+id/contact_item_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@mipmap/captainamerica"
             android:scaleType="centerCrop"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -26,8 +25,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:src="@mipmap/itshighnoon"/>
+            android:layout_marginLeft="20dp"/>
 
         <ImageView
             android:id="@+id/contact_item_editimg"

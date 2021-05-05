@@ -1,31 +1,30 @@
 package com.battor.fastwxcall;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import java.util.List;
+
+import static android.app.Activity.RESULT_OK;
 
 public class ContactFragment extends Fragment {
 
     private static final String TAG = "ContactFragment";
+    private ContactAdapter mContactAdapter;
+    private ContactDataBaseHelper dbHelper;
 
     private List<Contact> mContactList;
 
-    public ContactFragment(){
-
-    }
-
-    public void setConatctData(List<Contact> contactList){
-        this.mContactList = contactList;
+    public ContactFragment() {
     }
 
     @Override
@@ -33,7 +32,9 @@ public class ContactFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_contact, container, false);
         RecyclerView recyclerView = (RecyclerView) view.findViewById(R.id.contact_recyclerview);
-        recyclerView.setAdapter(new ContactAdapter(this.mContactList));
+        initContactList();
+        this.mContactAdapter = new ContactAdapter(this, mContactList);
+        recyclerView.setAdapter(this.mContactAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -54,5 +55,21 @@ public class ContactFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    private void initContactList(){
+        dbHelper = ContactDataBaseHelper.initAndObtain(getContext());
+        mContactList = dbHelper.getContactList();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case ContactAdapter.CONTACT_FRAGMENT_EDIT_REQUEST_CODE:
+                if(resultCode == RESULT_OK){
+                    this.mContactAdapter.updateContactList(dbHelper.getContactList());
+                }
+                break;
+        }
     }
 }

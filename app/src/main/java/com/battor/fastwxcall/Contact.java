@@ -1,17 +1,30 @@
 package com.battor.fastwxcall;
 
+import java.util.Date;
+
 /**
- * 联系人类
+ * 联系人 类
  */
 public class Contact {
-    private String Id;  // 存数据时的 id
-    private int headImgId;  // 头像的图片 id
-    private int photoId;    // 照片的 id
+    private String Id;
+    private String name;
+    private int headImgId;
+    private String photoImgPath;
+    private Date createTime;
+    private Date updateTime;
 
-    public Contact(String id, int headImgId, int photoId){
-        this.Id = id;
+    public Contact(){
+
+    }
+
+    public Contact(String id, String name, int headImgId, String photoImgPath,
+                   Date createTime, Date updateTime) {
+        Id = id;
+        this.name = name;
         this.headImgId = headImgId;
-        this.photoId = photoId;
+        this.photoImgPath = photoImgPath;
+        this.createTime = createTime;
+        this.updateTime = updateTime;
     }
 
     public String getId() {
@@ -22,6 +35,14 @@ public class Contact {
         Id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getHeadImgId() {
         return headImgId;
     }
@@ -30,11 +51,27 @@ public class Contact {
         this.headImgId = headImgId;
     }
 
-    public int getPhotoId() {
-        return photoId;
+    public String getPhotoImgPath() {
+        return photoImgPath;
     }
 
-    public void setPhotoId(int photoId) {
-        this.photoId = photoId;
+    public void setPhotoImgPath(String photoImgPath) {
+        this.photoImgPath = photoImgPath;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTimestamp(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTimestamp(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

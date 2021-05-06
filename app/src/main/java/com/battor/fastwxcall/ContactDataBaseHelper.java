@@ -42,6 +42,8 @@ public class ContactDataBaseHelper extends SQLiteOpenHelper {
     private static final String DELETE_SQL =
             "DELETE FROM Contact WHERE id = ?";
 
+    private static ContactDataBaseHelper dataBaseHelper;
+
     public ContactDataBaseHelper(Context context, String name, SQLiteDatabase.CursorFactory cursorFactory, int version){
         super(context, name, cursorFactory, version);
     }
@@ -57,7 +59,14 @@ public class ContactDataBaseHelper extends SQLiteOpenHelper {
     }
 
     public static ContactDataBaseHelper initAndObtain(Context context){
-        return new ContactDataBaseHelper(context, "Contact.db", null, 1);
+        if(dataBaseHelper == null){
+            synchronized (ContactDataBaseHelper.class){
+                if(dataBaseHelper == null){
+                    dataBaseHelper = new ContactDataBaseHelper(context, "Contact.db", null, 1);
+                }
+            }
+        }
+        return dataBaseHelper;
     }
 
     // 新增

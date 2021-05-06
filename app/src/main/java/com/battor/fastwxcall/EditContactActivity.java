@@ -28,6 +28,8 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
@@ -171,6 +173,15 @@ public class EditContactActivity extends AppCompatActivity {
             case TAKE_PHOTO:
                 if(resultCode == RESULT_OK){
                     imagePath = getExternalCacheDir() + "/" + photoFileName;
+                    Bitmap bitmap = Utils.rotateBitmap(BitmapFactory.decodeFile(imagePath),90);
+                    File imageFile = new File(imagePath);
+                    imageFile.delete();
+                    try {
+                        imageFile.createNewFile();
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(imageFile));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     displayImage(imagePath);
                 }
                 break;

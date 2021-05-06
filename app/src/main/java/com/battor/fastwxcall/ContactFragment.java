@@ -54,7 +54,15 @@ public class ContactFragment extends Fragment {
                 }
             }
         });
+
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        AccessibilityServiceFlagUtil.setAccessibilityIsRunning(getContext(),false);
+        AccessibilityServiceFastCall.resetFlagIndex();
     }
 
     private void initContactList(){

@@ -144,6 +144,17 @@ public class MainActivity extends AppCompatActivity implements OnPageChangeListe
     }
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AccessibilityServiceFlagUtil.setAccessibilityIsRunning(this, false);
+    }
+
+    @Override
     public boolean onMenuOpened(int featureId, Menu menu) {
         if (featureId == Window.FEATURE_ACTION_BAR && menu != null)
         {
@@ -177,4 +188,6 @@ public class MainActivity extends AppCompatActivity implements OnPageChangeListe
             e.printStackTrace();
         }
     }
+
+
 }

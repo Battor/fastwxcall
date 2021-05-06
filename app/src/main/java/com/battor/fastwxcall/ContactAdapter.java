@@ -4,7 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -94,6 +98,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             holder.mImageView.setOnLongClickListener(new View.OnLongClickListener(){
                 @Override
                 public boolean onLongClick(View view) {
+                    AccessibilityServiceFlagUtil.setTargetContactName(mContext, nowContact.getName());
+                    AccessibilityServiceFlagUtil.setAccessibilityIsRunning(mContext, true);
+                    if(!checkWXInstalled(mContext)){
+                        Toast.makeText(mContext, "WX is not installed", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
                     Toast.makeText(mContext, "photo long clicked", Toast.LENGTH_SHORT).show();
                     return true;
                 }
@@ -165,5 +175,24 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     public void updateContactList(List<Contact> contactList){
         this.mContactList = contactList;
         notifyDataSetChanged();
+    }
+
+    private boolean checkWXInstalled(Context context) {
+        String wxPackageName = "com.tencent.mm";
+        PackageInfo packageInfo;
+        try {
+            packageInfo = context.getPackageManager().getPackageInfo(wxPackageName, 0);
+        } catch (Exception e) {
+            packageInfo = null;
+            e.printStackTrace();
+        }
+        if(packageInfo == null) {
+            return false;
+        } else {
+            PackageManager packageManager = mContext.getPackageManager();
+            Intent it = packageManager.getLaunchIntentForPackage(wxPackageName);
+            mContext.startActivity(it);
+            return true;
+        }
     }
 }

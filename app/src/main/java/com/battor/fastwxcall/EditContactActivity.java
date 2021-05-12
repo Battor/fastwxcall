@@ -43,16 +43,13 @@ public class EditContactActivity extends AppCompatActivity {
     private ContactDataBaseHelper dbHelper;
 
     private String contactId;
-    private String imagePath;
-
     private Contact mContact = null;
 
-    private Uri imageUri;
+    private String newImagePath = null;
+    private Uri imageUri = null;
 
     private final int TAKE_PHOTO = 1;
     private final int CHOOSE_PHOTO = 2;
-
-    private String photoFileName;
 
     private boolean isCreate = false;
 
@@ -81,19 +78,22 @@ public class EditContactActivity extends AppCompatActivity {
 
         if(contactId != null && !"".equals(contactId)){
             mContact = dbHelper.getContactById(contactId);
-            imagePath = mContact.getPhotoImgPath();
+
             nameTextView.setText(mContact.getName());
             photoImageView.setImageBitmap(BitmapFactory.decodeFile(mContact.getPhotoImgPath()));
         }else{
+            mContact = new Contact();
+            mContact.setId(UUID.randomUUID().toString());
+
             isCreate = true;
-            contactId = UUID.randomUUID().toString();
         }
 
         photoImageView.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
-                photoFileName = contactId + "_" + new Date().getTime() + ".jpg";
-                File outputImage = new File(getExternalCacheDir(), photoFileName);
+                newImagePath = getExternalCacheDir() + File.separator
+                                + contactId + "_" + new Date().getTime() + ".jpg";
+                File outputImage = new File(newImagePath);
                 try{
                     outputImage.createNewFile();
                 }catch (Exception ex){
@@ -131,18 +131,22 @@ public class EditContactActivity extends AppCompatActivity {
                 String tmpName = nameTextView.getText().toString();
                 if("".equals(tmpName)){
                     Toast.makeText(EditContactActivity.this, "名称不可以为空", Toast.LENGTH_SHORT).show();
-                }else if(imagePath == null || "".equals(imagePath)){
+                }else if(mContact.getPhotoImgPath() == null || "".equals(mContact.getPhotoImgPath())){
                     Toast.makeText(EditContactActivity.this, "请上传图片", Toast.LENGTH_SHORT).show();
                 }else{
                     if(isCreate){   // 新增
-                        dbHelper.InsertContact(new Contact(contactId.toString(),tmpName,
-                                        new Random().nextInt(5) % 5 + 1, imagePath, null, null));
+                        mContact.setName(tmpName);
+                        mContact.setHeadImgId(new Random().nextInt(5) % 5 + 1);
+                        dbHelper.InsertContact(mContact);
                     }else{
                         mContact.setName(tmpName);
-                        mContact.setPhotoImgPath(imagePath);
                         dbHelper.UpdateContact(mContact);
                     }
-                    deleteOldPhotos(contactId);
+
+                    if(imageUri != null){
+                        deleteOldPhotos(contactId);
+                    }
+
                     Toast.makeText(EditContactActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
                     setResult(RESULT_OK);
                     finish();
@@ -172,9 +176,8 @@ public class EditContactActivity extends AppCompatActivity {
         switch (requestCode){
             case TAKE_PHOTO:
                 if(resultCode == RESULT_OK){
-                    imagePath = getExternalCacheDir() + "/" + photoFileName;
-                    Bitmap bitmap = Utils.rotateBitmap(BitmapFactory.decodeFile(imagePath),90);
-                    File imageFile = new File(imagePath);
+                    Bitmap bitmap = Utils.rotateBitmap(BitmapFactory.decodeFile(newImagePath),90);
+                    File imageFile = new File(newImagePath);
                     imageFile.delete();
                     try {
                         imageFile.createNewFile();
@@ -182,7 +185,7 @@ public class EditContactActivity extends AppCompatActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    displayImage(imagePath);
+                    displayImage(newImagePath);
                 }
                 break;
             case CHOOSE_PHOTO:
@@ -245,7 +248,7 @@ public class EditContactActivity extends AppCompatActivity {
     }
 
     private void displayImage(String imagePath){
-        this.imagePath = imagePath;
+        mContact.setPhotoImgPath(imagePath);
         Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
         photoImageView.setImageBitmap(bitmap);
     }
@@ -257,10 +260,11 @@ public class EditContactActivity extends AppCompatActivity {
     }
 
     private void deleteOldPhotos(final String contactId){
+        final String nowPhotoImagePath = new File(mContact.getPhotoImgPath()).getName();
         File[] oldPhotos = getExternalCacheDir().listFiles(new FileFilter() {
             @Override
             public boolean accept(File file) {
-                return file.getName().startsWith(contactId) && !file.getName().equals(photoFileName);
+                return file.getName().startsWith(contactId) && !file.getName().equals(nowPhotoImagePath);
             }
         });
         for (File oldPhoto:oldPhotos){

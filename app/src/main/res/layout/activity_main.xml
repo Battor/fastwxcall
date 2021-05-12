@@ -23,7 +23,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            cv:icon="@mipmap/phonecall"
+            cv:icon="@mipmap/contacts"
             cv:text="联系"
             cv:text_size="12sp" />
 
@@ -33,7 +33,7 @@
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:padding="5dp"
-            cv:icon="@mipmap/line"
+            cv:icon="@mipmap/suggest"
             cv:text="数据"
             cv:text_size="12sp" />
 

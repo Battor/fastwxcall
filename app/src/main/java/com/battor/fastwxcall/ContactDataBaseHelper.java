@@ -44,7 +44,7 @@ public class ContactDataBaseHelper extends SQLiteOpenHelper {
 
     private static ContactDataBaseHelper dataBaseHelper;
 
-    public ContactDataBaseHelper(Context context, String name, SQLiteDatabase.CursorFactory cursorFactory, int version){
+    private ContactDataBaseHelper(Context context, String name, SQLiteDatabase.CursorFactory cursorFactory, int version){
         super(context, name, cursorFactory, version);
     }
 

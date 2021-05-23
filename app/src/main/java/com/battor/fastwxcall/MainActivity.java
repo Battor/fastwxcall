@@ -17,19 +17,21 @@ import android.view.ViewConfiguration;
 import android.view.Window;
 
 import com.battor.fastwxcall.customview.ChangeColorIconWithTextView;
+import com.google.gson.Gson;
+import com.google.gson.JsonSerializationContext;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnPageChangeListener, OnClickListener {
+public class MainActivity extends AppCompatActivity implements OnPageChangeListener, OnClickListener  {
 
     private ViewPager mViewPager;
     private List<Fragment> mTabFragments = new ArrayList<Fragment>();   // 上方 Fragment 的集合
     private FragmentPagerAdapter mAdapter;
 
-    private String[] mContents = new String[] { "这是数据页面", "这是设置页面"};
+    private String[] mContents = new String[] { /*"这是数据页面", "这是设置页面"*/};
 
     private List<ChangeColorIconWithTextView> mIndicators = new ArrayList<ChangeColorIconWithTextView>();   // 下方指示器的集合
 
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements OnPageChangeListe
 
     private void initDatas(){
         mTabFragments.add(new ContactFragment());
+        mTabFragments.add(new SettingFragment());
 
         for (String title : mContents){
             TabFragment tabFragment = new TabFragment();
@@ -77,15 +80,15 @@ public class MainActivity extends AppCompatActivity implements OnPageChangeListe
 
     private void initTabIndicator(){
         ChangeColorIconWithTextView one = (ChangeColorIconWithTextView) findViewById(R.id.main_indicator1);
-        ChangeColorIconWithTextView two = (ChangeColorIconWithTextView) findViewById(R.id.main_indicator2);
+        //ChangeColorIconWithTextView two = (ChangeColorIconWithTextView) findViewById(R.id.main_indicator2);
         ChangeColorIconWithTextView three = (ChangeColorIconWithTextView) findViewById(R.id.main_indicator3);
 
         mIndicators.add(one);
-        mIndicators.add(two);
+        //mIndicators.add(two);
         mIndicators.add(three);
 
         one.setOnClickListener(this);
-        two.setOnClickListener(this);
+        //two.setOnClickListener(this);
         three.setOnClickListener(this);
 
         one.setTextAndIconAlpha(1.0f);
@@ -126,13 +129,17 @@ public class MainActivity extends AppCompatActivity implements OnPageChangeListe
                 mIndicators.get(0).setTextAndIconAlpha(1.0f);
                 mViewPager.setCurrentItem(0, false);
                 break;
-            case R.id.main_indicator2:
+            /*case R.id.main_indicator2:
                 mIndicators.get(1).setTextAndIconAlpha(1.0f);
                 mViewPager.setCurrentItem(1, false);
                 break;
             case R.id.main_indicator3:
                 mIndicators.get(2).setTextAndIconAlpha(1.0f);
                 mViewPager.setCurrentItem(2, false);
+                break;*/
+            case R.id.main_indicator3:
+                mIndicators.get(1).setTextAndIconAlpha(1.0f);
+                mViewPager.setCurrentItem(1, false);
                 break;
         }
     }
@@ -188,6 +195,4 @@ public class MainActivity extends AppCompatActivity implements OnPageChangeListe
             e.printStackTrace();
         }
     }
-
-
 }

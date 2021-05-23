@@ -1,16 +1,33 @@
 package com.battor.fastwxcall;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Date;
 
 /**
  * 联系人 类
  */
 public class Contact {
-    private String Id;
+
+    @Expose
+    @SerializedName("Id")
+    private String id;
+
+    @Expose
+    @SerializedName("WXName")
     private String name;
+
+    @Expose
+    @SerializedName("HeadImgId")
     private int headImgId;
+
     private String photoImgPath;
+
+    @Expose
+    @SerializedName("CreateTime")
     private Date createTime;
+
     private Date updateTime;
 
     public Contact(){
@@ -19,7 +36,7 @@ public class Contact {
 
     public Contact(String id, String name, int headImgId, String photoImgPath,
                    Date createTime, Date updateTime) {
-        Id = id;
+        this.id = id;
         this.name = name;
         this.headImgId = headImgId;
         this.photoImgPath = photoImgPath;
@@ -28,11 +45,11 @@ public class Contact {
     }
 
     public String getId() {
-        return Id;
+        return id;
     }
 
     public void setId(String id) {
-        Id = id;
+        this.id = id;
     }
 
     public String getName() {

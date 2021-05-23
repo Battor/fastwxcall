@@ -27,7 +27,7 @@
             cv:text="联系"
             cv:text_size="12sp" />
 
-        <com.battor.fastwxcall.customview.ChangeColorIconWithTextView
+        <!--<com.battor.fastwxcall.customview.ChangeColorIconWithTextView
             android:id="@+id/main_indicator2"
             android:layout_width="0dp"
             android:layout_height="fill_parent"
@@ -35,7 +35,7 @@
             android:padding="5dp"
             cv:icon="@mipmap/suggest"
             cv:text="数据"
-            cv:text_size="12sp" />
+            cv:text_size="12sp" />-->
 
         <com.battor.fastwxcall.customview.ChangeColorIconWithTextView
             android:id="@+id/main_indicator3"
